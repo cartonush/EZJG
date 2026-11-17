@@ -1,4 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
+const APP_VERSION = '1.05.0';
 const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
@@ -8,6 +9,7 @@ let selectedRecord = null;
 let installPrompt = null;
 
 const $ = (id) => document.getElementById(id);
+if ($('appVersion')) $('appVersion').textContent = APP_VERSION;
 const normalize = (value) => String(value ?? '').trim();
 const unique = (key) => [...new Set(records.map(row => normalize(row[key])).filter(Boolean))]
   .sort((a,b) => a.localeCompare(b, 'he', {numeric:true}));
