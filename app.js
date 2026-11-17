@@ -116,14 +116,15 @@ function openResults(value) {
 function showDetails(row) {
   selectedRecord=row;
   $('detailName').textContent=row['מכלול'];
-  $('detailMeta').innerHTML=`<div class="meta-box"><small>מערכת</small><bdi dir="auto"><b>${esc(row['מערכת']||'—')}</b></bdi></div><div class="meta-box"><small>פאנל</small><bdi dir="auto"><b>${esc(row['פאנל']||'—')}</b></bdi></div><div class="meta-box"><small>כרך</small><b>${esc(row['כרך']||'—')}</b></div><div class="meta-box"><small>JG</small><bdi dir="auto"><b>${esc(row['JG']||'—')}</b></bdi></div><div class="meta-box"><small>מסחא</small><b>${esc(row['מסחא']||'—')}</b></div>`;
+  $('detailMeta').innerHTML=`<button type="button" class="meta-box meta-action" id="systemMetaButton"><small>מערכת · פתיחת דף</small><bdi dir="auto"><b>${esc(row['מערכת']||'—')}</b></bdi></button><div class="meta-box"><small>פאנל</small><bdi dir="auto"><b>${esc(row['פאנל']||'—')}</b></bdi></div><div class="meta-box"><small>כרך</small><b>${esc(row['כרך']||'—')}</b></div><div class="meta-box"><small>JG</small><bdi dir="auto"><b>${esc(row['JG']||'—')}</b></bdi></div><div class="meta-box"><small>מסחא</small><b>${esc(row['מסחא']||'—')}</b></div>`;
+  $('systemMetaButton').addEventListener('click',openSelectedSystem);
   const target=mode==='panel'?'מערכת':'פאנל';
   $('alternateView').innerHTML=`מעבר לתצוגת ${target} <span>←</span>`;
   $('detailDialog').showModal();
 }
 function openEditor() {
   $('homeView').hidden=true;$('browseView').hidden=true;$('resultsView').hidden=true;$('editorView').hidden=false;
-  setNav('navData');renderEditor();
+  setNav('');renderEditor();
 }
 function readEditorRows() {
   return [...$('editorList').querySelectorAll('.editor-row')].map(row=>Object.fromEntries(
@@ -163,6 +164,11 @@ function activateAlternate() {
   $('detailDialog').close();openBrowse(target);$('choiceSearch').value=value;$('choiceSearch').dispatchEvent(new Event('input'));
   if(unique(target==='panel'?'פאנל':'מערכת').includes(value))openResults(value);
 }
+function openSelectedSystem() {
+  if(!selectedRecord)return;
+  const system=selectedRecord['מערכת'];
+  $('detailDialog').close();openBrowse('system');openResults(system);
+}
 
 $('homeButton').addEventListener('click',goHome);
 $('backHome').addEventListener('click',goHome);
@@ -173,30 +179,14 @@ $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('cho
 $('navHome').addEventListener('click',goHome);
 $('navPanels').addEventListener('click',()=>openBrowse('panel'));
 $('navSystems').addEventListener('click',()=>openBrowse('system'));
-$('navData').addEventListener('click',openEditor);
+$('editTableHome').addEventListener('click',openEditor);
 $('editorBack').addEventListener('click',goHome);
 $('addRow').addEventListener('click',()=>{records=readEditorRows();records.push(Object.fromEntries(EXPECTED.map(field=>[field,''])));renderEditor();$('editorList').lastElementChild?.querySelector('input')?.focus();});
-$('loadExcelFromEditor').addEventListener('click',()=>$('excelFile').click());
 $('saveTable').addEventListener('click',()=>saveEditorRows(true));
 $('exportExcel').addEventListener('click',exportEditorExcel);
 $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
 $('alternateView').addEventListener('click',activateAlternate);
 $('resetData').addEventListener('click',()=>{localStorage.removeItem('ezjg-records');loadDefault().then(()=>{goHome();showToast('נתוני ההדגמה נטענו מחדש.');});});
-$('excelFile').addEventListener('change',async event=>{
-  const file=event.target.files?.[0];if(!file)return;
-  try{
-    let rows;
-    if(file.name.toLowerCase().endsWith('.csv'))rows=parseCsv(await file.text());
-    else {
-      if(!window.XLSX)throw new Error('טעינת Excel דורשת חיבור אינטרנט בפעם הראשונה.');
-      const workbook=XLSX.read(await file.arrayBuffer(),{type:'array'});
-      const sheet=workbook.Sheets[workbook.SheetNames[0]];
-      rows=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
-    }
-    records=validateRows(rows);localStorage.setItem('ezjg-records',JSON.stringify(records));updateStatus(true);goHome();showToast(`נטענו ${records.length} שורות מהטבלה.`);
-  }catch(error){showToast(error.message||'לא ניתן לקרוא את הקובץ.');}
-  event.target.value='';
-});
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('installButton').hidden=false;});
 $('installButton').addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('installButton').hidden=true;});
 loadDefault().then(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});});
