@@ -1,0 +1,13 @@
+{
+  "name": "EZJG · מאתר מכלולים",
+  "short_name": "EZJG",
+  "description": "אב טיפוס לחיפוש מכלולים על בסיס נתוני הדגמה",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fa",
+  "theme_color": "#10243a",
+  "icons": [{"src":"assets/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
