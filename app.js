@@ -1,5 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
-const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG'];
+const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
 let activeChoice = '';
@@ -68,15 +68,10 @@ async function loadDefault() {
 }
 
 const DEMO_FALLBACK=[
-  {'מכלול':'מחשב ראשי','מערכת':'בקרה כללית','פאנל':'פאנל 3','כרך':'כרך 1','JG':'JG 01'},
-  {'מכלול':'יחידת תצוגה','מערכת':'בקרה כללית','פאנל':'פאנל 3','כרך':'כרך 1','JG':'JG 02'},
-  {'מכלול':'כרטיס ממשק','מערכת':'בקרה כללית','פאנל':'פאנל 5','כרך':'כרך 2','JG':'JG 11'},
-  {'מכלול':'יחידת הזנה','מערכת':'חשמל משני','פאנל':'פאנל 3','כרך':'כרך 3','JG':'JG 04'},
-  {'מכלול':'ממיר מתח','מערכת':'חשמל משני','פאנל':'פאנל 7','כרך':'כרך 3','JG':'JG 07'},
-  {'מכלול':'חיישן מדומה','מערכת':'חישה והתרעה','פאנל':'פאנל 5','כרך':'כרך 2','JG':'JG 12'},
-  {'מכלול':'בקר עזר','מערכת':'חישה והתרעה','פאנל':'פאנל 9','כרך':'כרך 4','JG':'JG 20'},
-  {'מכלול':'מכלול תקשורת','מערכת':'תקשורת פנימית','פאנל':'פאנל 7','כרך':'כרך 5','JG':'JG 08'},
-  {'מכלול':'מתאם נתונים','מערכת':'תקשורת פנימית','פאנל':'פאנל 9','כרך':'כרך 5','JG':'JG 21'}
+  {'מכלול':'PSP','מערכת':'74A','פאנל':'פאנל 1202','כרך':'','JG':'','מסחא':'3'},
+  {'מכלול':'DMT','מערכת':'74A','פאנל':'פאנל 1101','כרך':'','JG':'','מסחא':'2'},
+  {'מכלול':'MLPRF','מערכת':'74A','פאנל':'פאנל 1202','כרך':'','JG':'','מסחא':'4'},
+  {'מכלול':'ANT','מערכת':'74A','פאנל':'פאנל 1100','כרך':'','JG':'','מסחא':'1'}
 ];
 
 function setNav(active) {
@@ -119,7 +114,7 @@ function openResults(value) {
 function showDetails(row) {
   selectedRecord=row;
   $('detailName').textContent=row['מכלול'];
-  $('detailMeta').innerHTML=`<div class="meta-box"><small>מערכת</small><b>${esc(row['מערכת']||'—')}</b></div><div class="meta-box"><small>פאנל</small><b>${esc(row['פאנל']||'—')}</b></div><div class="meta-box"><small>כרך</small><b>${esc(row['כרך']||'—')}</b></div><div class="meta-box"><small>JG</small><b>${esc(row['JG']||'—')}</b></div>`;
+  $('detailMeta').innerHTML=`<div class="meta-box"><small>מערכת</small><b>${esc(row['מערכת']||'—')}</b></div><div class="meta-box"><small>פאנל</small><b>${esc(row['פאנל']||'—')}</b></div><div class="meta-box"><small>כרך</small><b>${esc(row['כרך']||'—')}</b></div><div class="meta-box"><small>JG</small><b>${esc(row['JG']||'—')}</b></div><div class="meta-box"><small>מסחא</small><b>${esc(row['מסחא']||'—')}</b></div>`;
   const target=mode==='panel'?'מערכת':'פאנל';
   $('alternateView').innerHTML=`מעבר לתצוגת ${target} <span>←</span>`;
   $('detailDialog').showModal();
