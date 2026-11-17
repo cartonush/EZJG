@@ -9,6 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="editor.css">
 </head>
 <body>
   <header class="topbar">
@@ -65,6 +66,20 @@
       <div class="breadcrumb"><button id="backChoices" class="back-button">← <span>חזרה לבחירה</span></button><span>/</span><span id="selectedCrumb"></span></div>
       <div class="section-heading browse-heading"><div><span class="eyebrow" id="resultsEyebrow"></span><h2 id="resultsTitle"></h2></div><span class="count-pill" id="resultCount"></span></div>
       <div id="resultList" class="result-list"></div>
+    </section>
+
+    <section id="editorView" class="editor-section" hidden>
+      <div class="breadcrumb"><button id="editorBack" class="back-button">← <span>דף הבית</span></button><span>/</span><span>עריכת טבלה</span></div>
+      <div class="section-heading browse-heading"><div><span class="eyebrow">ניהול נתונים</span><h2>עריכת הטבלה</h2></div><span class="count-pill" id="editorCount"></span></div>
+      <p class="editor-hint">שנה את הערכים, הוסף או מחק שורות, ואז שמור. שדות כרך ו־JG יכולים להישאר ריקים.</p>
+      <div class="editor-actions">
+        <button id="addRow" class="secondary-button">＋ הוספת מכלול</button>
+        <button id="loadExcelFromEditor" class="secondary-button">↑ טעינת Excel</button>
+        <button id="exportExcel" class="primary-button">↓ הורדת Excel</button>
+      </div>
+      <div id="editorList" class="editor-list"></div>
+      <button id="saveTable" class="save-button">שמירת שינויים</button>
+      <p class="local-save-note">העריכות נשמרות בדפדפן הזה. הורד Excel כדי לשמור עותק של הטבלה.</p>
     </section>
   </main>
 

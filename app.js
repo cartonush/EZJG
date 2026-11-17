@@ -78,7 +78,7 @@ function setNav(active) {
   document.querySelectorAll('.nav-item').forEach(item=>item.classList.toggle('active',item.id===active));
 }
 function goHome() {
-  $('homeView').hidden=false;$('browseView').hidden=true;$('resultsView').hidden=true;
+  $('homeView').hidden=false;$('browseView').hidden=true;$('resultsView').hidden=true;$('editorView').hidden=true;
   setNav('navHome');activeChoice='';activeQuery='';
 }
 function openBrowse(nextMode) {
@@ -119,6 +119,42 @@ function showDetails(row) {
   $('alternateView').innerHTML=`מעבר לתצוגת ${target} <span>←</span>`;
   $('detailDialog').showModal();
 }
+function openEditor() {
+  $('homeView').hidden=true;$('browseView').hidden=true;$('resultsView').hidden=true;$('editorView').hidden=false;
+  setNav('navData');renderEditor();
+}
+function readEditorRows() {
+  return [...$('editorList').querySelectorAll('.editor-row')].map(row=>Object.fromEntries(
+    [...row.querySelectorAll('[data-field]')].map(input=>[input.dataset.field,normalize(input.value)])
+  ));
+}
+function renderEditor() {
+  $('editorCount').textContent=`${records.length} שורות`;
+  $('editorList').innerHTML=records.map((row,index)=>`<article class="editor-row" data-row="${index}">
+    <div class="editor-row-head"><b>מכלול ${index+1}</b><button class="delete-row" data-delete="${index}">מחיקת שורה</button></div>
+    <div class="editor-fields">${EXPECTED.map(field=>`<label class="editor-field"><span>${esc(field)}</span><input type="text" data-field="${esc(field)}" value="${esc(row[field]||'')}" dir="auto" aria-label="${esc(field)}"></label>`).join('')}</div>
+  </article>`).join('')||'<div class="empty-state">אין שורות בטבלה. הוסף מכלול כדי להתחיל.</div>';
+  $('editorList').querySelectorAll('[data-delete]').forEach(button=>button.addEventListener('click',()=>{
+    const current=readEditorRows();current.splice(Number(button.dataset.delete),1);records=current;renderEditor();
+  }));
+}
+function saveEditorRows(showMessage=true) {
+  try{
+    const rows=readEditorRows().filter(row=>Object.values(row).some(value=>value));
+    if(!rows.length)throw new Error('הטבלה ריקה. הוסף לפחות מכלול אחד.');
+    const cleaned=validateRows(rows);
+    records=cleaned;localStorage.setItem('ezjg-records',JSON.stringify(records));updateStatus(true);renderEditor();
+    if(showMessage)showToast('השינויים נשמרו בדפדפן הזה.');
+    return true;
+  }catch(error){showToast(error.message||'לא ניתן לשמור את הטבלה.');return false;}
+}
+function exportEditorExcel() {
+  if(!saveEditorRows(false))return;
+  if(!window.XLSX){showToast('ייצוא Excel דורש חיבור אינטרנט.');return;}
+  const sheet=XLSX.utils.json_to_sheet(records,{header:EXPECTED});
+  const workbook=XLSX.utils.book_new();XLSX.utils.book_append_sheet(workbook,sheet,'נתונים');
+  XLSX.writeFile(workbook,'EZJG-טבלה.xlsx');showToast('קובץ Excel ירד למכשיר.');
+}
 function activateAlternate() {
   if(!selectedRecord)return;
   const target=mode==='panel'?'system':'panel';const value=target==='system'?selectedRecord['מערכת']:selectedRecord['פאנל'];
@@ -135,7 +171,12 @@ $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('cho
 $('navHome').addEventListener('click',goHome);
 $('navPanels').addEventListener('click',()=>openBrowse('panel'));
 $('navSystems').addEventListener('click',()=>openBrowse('system'));
-$('navData').addEventListener('click',()=>$('excelFile').click());
+$('navData').addEventListener('click',openEditor);
+$('editorBack').addEventListener('click',goHome);
+$('addRow').addEventListener('click',()=>{records=readEditorRows();records.push(Object.fromEntries(EXPECTED.map(field=>[field,''])));renderEditor();$('editorList').lastElementChild?.querySelector('input')?.focus();});
+$('loadExcelFromEditor').addEventListener('click',()=>$('excelFile').click());
+$('saveTable').addEventListener('click',()=>saveEditorRows(true));
+$('exportExcel').addEventListener('click',exportEditorExcel);
 $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
 $('alternateView').addEventListener('click',activateAlternate);
 $('resetData').addEventListener('click',()=>{localStorage.removeItem('ezjg-records');loadDefault().then(()=>{goHome();showToast('נתוני ההדגמה נטענו מחדש.');});});
