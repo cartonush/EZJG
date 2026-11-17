@@ -55,8 +55,15 @@ function updateStatus(isCustom=false) {
 async function loadDefault() {
   const stored=localStorage.getItem('ezjg-records');
   if(stored){try{records=validateRows(JSON.parse(stored));updateStatus(true);return;}catch{localStorage.removeItem('ezjg-records');}}
-  try{const response=await fetch(DEMO_PATH);if(!response.ok)throw new Error();records=validateRows(parseCsv(await response.text()));}
-  catch{records=validateRows(DEMO_FALLBACK);}
+  let loaded=false;
+  if(window.XLSX){
+    try{
+      const response=await fetch('data/טבלת_מכלולים_לדוגמה.xlsx');if(!response.ok)throw new Error();
+      const workbook=XLSX.read(await response.arrayBuffer(),{type:'array'});
+      records=validateRows(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]],{defval:'',raw:false}));loaded=true;
+    }catch{}
+  }
+  if(!loaded){try{const response=await fetch(DEMO_PATH);if(!response.ok)throw new Error();records=validateRows(parseCsv(await response.text()));}catch{records=validateRows(DEMO_FALLBACK);}}
   updateStatus(false);
 }
 
