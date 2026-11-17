@@ -1,5 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
-const APP_VERSION = '1.0.7';
+const APP_VERSION = '1.0.8';
 const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
@@ -43,20 +43,11 @@ function validateRows(rows) {
   return cleaned;
 }
 
-function showToast(message) {
-  document.querySelector('.toast')?.remove();
-  const toast=document.createElement('div');toast.className='toast';toast.textContent=message;document.body.append(toast);
-  setTimeout(()=>toast.remove(),3200);
-}
-
-function updateStatus(isCustom=false) {
-  $('dataStatus').textContent=isCustom?`נטענה טבלה אישית · ${records.length} שורות`:`נתוני הדגמה נטענו · ${records.length} שורות`;
-  $('resetData').hidden=!isCustom;
+function updateStatus() {
+  $('dataStatus').textContent=`נתוני הדגמה נטענו · ${records.length} שורות`;
 }
 
 async function loadDefault() {
-  const stored=localStorage.getItem('ezjg-records');
-  if(stored){try{records=validateRows(JSON.parse(stored));updateStatus(true);return;}catch{localStorage.removeItem('ezjg-records');}}
   let loaded=false;
   if(window.XLSX){
     try{
@@ -70,17 +61,17 @@ async function loadDefault() {
 }
 
 const DEMO_FALLBACK=[
-  {'מכלול':'PSP','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1202','כרך':'','JG':'','מסחא':'3'},
-  {'מכלול':'DMT','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1101','כרך':'','JG':'','מסחא':'2'},
-  {'מכלול':'MLPRF','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1202','כרך':'','JG':'','מסחא':'4'},
-  {'מכלול':'ANT','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1100','כרך':'','JG':'','מסחא':'1'}
+  {'מכלול':'PSP','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1202','כרך':'0235','JG':'JG-3','מסחא':'3'},
+  {'מכלול':'DMT','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1101','כרך':'0235','JG':'JG-2','מסחא':'2'},
+  {'מכלול':'MLPRF','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1202','כרך':'0235','JG':'JG-4','מסחא':'4'},
+  {'מכלול':'ANT','מערכת':'מכם | FCR - 74A','פאנל':'פאנל 1100','כרך':'0235','JG':'JG-1','מסחא':'1'}
 ];
 
 function setNav(active) {
   document.querySelectorAll('.nav-item').forEach(item=>item.classList.toggle('active',item.id===active));
 }
 function goHome() {
-  $('homeView').hidden=false;$('browseView').hidden=true;$('resultsView').hidden=true;$('editorView').hidden=true;
+  $('homeView').hidden=false;$('browseView').hidden=true;$('resultsView').hidden=true;
   setNav('navHome');activeChoice='';activeQuery='';
 }
 function openBrowse(nextMode) {
@@ -117,58 +108,20 @@ function openResults(value) {
 function showDetails(row) {
   selectedRecord=row;
   $('detailName').textContent=row['מכלול'];
-  $('detailMeta').innerHTML=`<button type="button" class="meta-box meta-action" id="systemMetaButton"><small>מערכת · פתיחת דף</small><bdi dir="rtl"><b>${esc(row['מערכת']||'—')}</b></bdi></button><div class="meta-box"><small>פאנל</small><bdi dir="auto"><b>${esc(row['פאנל']||'—')}</b></bdi></div><div class="meta-box"><small>כרך</small><b>${esc(row['כרך']||'—')}</b></div><div class="meta-box"><small>JG</small><bdi dir="auto"><b>${esc(row['JG']||'—')}</b></bdi></div><div class="meta-box"><small>מסחא</small><b>${esc(row['מסחא']||'—')}</b></div>`;
-  $('systemMetaButton').addEventListener('click',openSelectedSystem);
+  $('detailMeta').innerHTML=`<button type="button" class="meta-box meta-action" id="systemMetaButton"><small>מערכת · פתיחת דף</small><bdi dir="rtl"><b>${esc(row['מערכת']||'—')}</b></bdi></button><button type="button" class="meta-box meta-action" id="panelMetaButton"><small>פאנל · פתיחת דף</small><bdi dir="auto"><b>${esc(row['פאנל']||'—')}</b></bdi></button><div class="meta-box"><small>כרך</small><b>${esc(row['כרך']||'—')}</b></div><div class="meta-box"><small>JG</small><bdi dir="auto"><b>${esc(row['JG']||'—')}</b></bdi></div><div class="meta-box"><small>מסחא</small><b>${esc(row['מסחא']||'—')}</b></div>`;
   const target=mode==='panel'?'מערכת':'פאנל';
   $('alternateView').innerHTML=`מעבר לתצוגת ${target} <span>←</span>`;
+  $('systemMetaButton').addEventListener('click',()=>openRelatedView('system',row['מערכת']));
+  $('panelMetaButton').addEventListener('click',()=>openRelatedView('panel',row['פאנל']));
   $('detailDialog').showModal();
-}
-function openEditor() {
-  $('homeView').hidden=true;$('browseView').hidden=true;$('resultsView').hidden=true;$('editorView').hidden=false;
-  setNav('');renderEditor();
-}
-function readEditorRows() {
-  return [...$('editorList').querySelectorAll('.editor-row')].map(row=>Object.fromEntries(
-    [...row.querySelectorAll('[data-field]')].map(input=>[input.dataset.field,normalize(input.value)])
-  ));
-}
-function renderEditor() {
-  $('editorCount').textContent=`${records.length} שורות`;
-  $('editorList').innerHTML=records.map((row,index)=>`<article class="editor-row" data-row="${index}">
-    <div class="editor-row-head"><b>מכלול ${index+1}</b><button class="delete-row" data-delete="${index}">מחיקת שורה</button></div>
-    <div class="editor-fields">${EXPECTED.map(field=>`<label class="editor-field"><span>${esc(field)}</span><input type="text" data-field="${esc(field)}" value="${esc(row[field]||'')}" dir="auto" aria-label="${esc(field)}"></label>`).join('')}</div>
-  </article>`).join('')||'<div class="empty-state">אין שורות בטבלה. הוסף מכלול כדי להתחיל.</div>';
-  $('editorList').querySelectorAll('[data-delete]').forEach(button=>button.addEventListener('click',()=>{
-    const current=readEditorRows();current.splice(Number(button.dataset.delete),1);records=current;renderEditor();
-  }));
-}
-function saveEditorRows(showMessage=true) {
-  try{
-    const rows=readEditorRows().filter(row=>Object.values(row).some(value=>value));
-    if(!rows.length)throw new Error('הטבלה ריקה. הוסף לפחות מכלול אחד.');
-    const cleaned=validateRows(rows);
-    records=cleaned;localStorage.setItem('ezjg-records',JSON.stringify(records));updateStatus(true);renderEditor();
-    if(showMessage)showToast('השינויים נשמרו בדפדפן הזה.');
-    return true;
-  }catch(error){showToast(error.message||'לא ניתן לשמור את הטבלה.');return false;}
-}
-function exportEditorExcel() {
-  if(!saveEditorRows(false))return;
-  if(!window.XLSX){showToast('ייצוא Excel דורש חיבור אינטרנט.');return;}
-  const sheet=XLSX.utils.json_to_sheet(records,{header:EXPECTED});
-  const workbook=XLSX.utils.book_new();XLSX.utils.book_append_sheet(workbook,sheet,'נתונים');
-  XLSX.writeFile(workbook,'EZJG-טבלה.xlsx');showToast('קובץ Excel ירד למכשיר.');
 }
 function activateAlternate() {
   if(!selectedRecord)return;
   const target=mode==='panel'?'system':'panel';const value=target==='system'?selectedRecord['מערכת']:selectedRecord['פאנל'];
-  $('detailDialog').close();openBrowse(target);$('choiceSearch').value=value;$('choiceSearch').dispatchEvent(new Event('input'));
-  if(unique(target==='panel'?'פאנל':'מערכת').includes(value))openResults(value);
+  openRelatedView(target,value);
 }
-function openSelectedSystem() {
-  if(!selectedRecord)return;
-  const system=selectedRecord['מערכת'];
-  $('detailDialog').close();openBrowse('system');openResults(system);
+function openRelatedView(target,value) {
+  $('detailDialog').close();openBrowse(target);openResults(value);
 }
 
 $('homeButton').addEventListener('click',goHome);
@@ -180,14 +133,8 @@ $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('cho
 $('navHome').addEventListener('click',goHome);
 $('navPanels').addEventListener('click',()=>openBrowse('panel'));
 $('navSystems').addEventListener('click',()=>openBrowse('system'));
-$('editTableHome').addEventListener('click',openEditor);
-$('editorBack').addEventListener('click',goHome);
-$('addRow').addEventListener('click',()=>{records=readEditorRows();records.push(Object.fromEntries(EXPECTED.map(field=>[field,''])));renderEditor();$('editorList').lastElementChild?.querySelector('input')?.focus();});
-$('saveTable').addEventListener('click',()=>saveEditorRows(true));
-$('exportExcel').addEventListener('click',exportEditorExcel);
 $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
 $('alternateView').addEventListener('click',activateAlternate);
-$('resetData').addEventListener('click',()=>{localStorage.removeItem('ezjg-records');loadDefault().then(()=>{goHome();showToast('נתוני ההדגמה נטענו מחדש.');});});
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('installButton').hidden=false;});
 $('installButton').addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('installButton').hidden=true;});
 loadDefault().then(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});});

@@ -1,25 +1,6 @@
-.editor-hint{font-size:12px;color:var(--muted);margin:-6px 0 16px}
-.editor-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.secondary-button,.primary-button{border:1px solid #d6e1eb;border-radius:10px;background:#fff;color:#2867a7;padding:10px 13px;font:600 12px Heebo,Arial;cursor:pointer}
-.primary-button{background:#e8f1f9;border-color:#d0e0ee}
-.editor-list{display:grid;gap:11px}
-.editor-row{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:0 5px 15px #18334d08}
-.editor-row-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.editor-row-head b{font-size:12px;color:#627489}
-.delete-row{border:0;background:#fff0ef;color:#a74743;border-radius:8px;padding:6px 9px;font:500 11px Heebo;cursor:pointer}
-.editor-fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
-.editor-field{display:grid;gap:4px;min-width:0}
-.editor-field span{font-size:10px;color:#718198}
-.editor-field input{width:100%;min-width:0;border:1px solid #dce5ed;border-radius:8px;background:#fbfcfd;padding:9px 8px;font:12px Heebo,Arial;color:var(--navy);outline:none}
-.editor-field input:focus{border-color:#76a7cf;box-shadow:0 0 0 3px #2867a714}
-.save-button{width:100%;border:0;border-radius:12px;padding:13px 16px;background:#10243a;color:#fff;font:600 13px Heebo,Arial;cursor:pointer;margin-top:14px}
-.local-save-note{font-size:10px;color:#8292a2;text-align:center;margin:9px 0 0}
-.upload-button{font-family:inherit;background:#fff}
 .meta-action{width:100%;text-align:right;font:inherit;background:#fff;color:var(--navy);cursor:pointer}
 .meta-action:hover{border-color:#a9c4dc}
 .nav-version{min-width:74px;cursor:default;user-select:none}
 .nav-version span{font-size:12px;font-weight:700;direction:ltr;unicode-bidi:isolate;line-height:1.2}
 .nav-version small{font-size:9px}
 .nav-version:hover span{transform:none}
-@media(max-width:650px){.editor-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.editor-actions button{flex:1 1 calc(50% - 8px)}}
-@media(max-width:370px){.editor-fields{grid-template-columns:1fr 1fr}}

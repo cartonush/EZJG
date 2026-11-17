@@ -33,7 +33,6 @@
     <section class="data-banner" aria-live="polite">
       <span class="status-dot"></span>
       <span id="dataStatus">טוען נתוני הדגמה…</span>
-      <button id="resetData" class="text-button" hidden>חזרה לנתוני הדגמה</button>
     </section>
 
     <section class="search-section" id="homeView">
@@ -47,10 +46,6 @@
           <span class="mode-icon">⌘</span><span class="mode-label">לפי מערכת</span>
           <span class="mode-hint">בחירת מערכת ואז מכלול</span><span class="mode-arrow">←</span>
         </button>
-      </div>
-      <div class="quick-tools">
-        <div><b>הטבלה שלך</b><span>ערוך, הוסף או מחק שורות</span></div>
-        <button id="editTableHome" class="upload-button">עריכת הטבלה</button>
       </div>
     </section>
 
@@ -67,25 +62,13 @@
       <div id="resultList" class="result-list"></div>
     </section>
 
-    <section id="editorView" class="editor-section" hidden>
-      <div class="breadcrumb"><button id="editorBack" class="back-button">← <span>דף הבית</span></button><span>/</span><span>עריכת טבלה</span></div>
-      <div class="section-heading browse-heading"><div><span class="eyebrow">ניהול נתונים</span><h2>עריכת הטבלה</h2></div><span class="count-pill" id="editorCount"></span></div>
-      <p class="editor-hint">שנה את הערכים, הוסף או מחק שורות, ואז שמור. שדות כרך ו־JG יכולים להישאר ריקים.</p>
-      <div class="editor-actions">
-        <button id="addRow" class="secondary-button">＋ הוספת מכלול</button>
-        <button id="exportExcel" class="primary-button">↓ הורדת Excel</button>
-      </div>
-      <div id="editorList" class="editor-list"></div>
-      <button id="saveTable" class="save-button">שמירת שינויים</button>
-      <p class="local-save-note">העריכות נשמרות בדפדפן הזה. הורד Excel כדי לשמור עותק של הטבלה.</p>
-    </section>
   </main>
 
   <nav class="bottom-nav" aria-label="תפריט ראשי">
     <button id="navHome" class="nav-item active"><span>⌂</span><small>ראשי</small></button>
     <button id="navPanels" class="nav-item"><span>▤</span><small>פאנלים</small></button>
     <button id="navSystems" class="nav-item"><span>⌘</span><small>מערכות</small></button>
-    <div class="nav-item nav-version" aria-label="גרסה 1.0.7"><span id="appVersion">1.0.7</span><small>גרסה</small></div>
+    <div class="nav-item nav-version" aria-label="גרסה 1.0.8"><span id="appVersion">1.0.8</span><small>גרסה</small></div>
   </nav>
 
   <dialog id="detailDialog" class="detail-dialog">
