@@ -1,5 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
-const APP_VERSION = '1.0.8';
+const APP_VERSION = '1.0.9';
 const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
@@ -10,6 +10,9 @@ let installPrompt = null;
 
 const $ = (id) => document.getElementById(id);
 if ($('appVersion')) $('appVersion').textContent = APP_VERSION;
+document.addEventListener('gesturestart', event => event.preventDefault(), {passive:false});
+document.addEventListener('gesturechange', event => event.preventDefault(), {passive:false});
+document.addEventListener('touchmove', event => {if(event.touches.length>1)event.preventDefault();}, {passive:false});
 const normalize = (value) => String(value ?? '').trim();
 const unique = (key) => [...new Set(records.map(row => normalize(row[key])).filter(Boolean))]
   .sort((a,b) => a.localeCompare(b, 'he', {numeric:true}));
@@ -77,6 +80,8 @@ function goHome() {
 function openBrowse(nextMode) {
   mode=nextMode;activeChoice='';activeQuery='';
   $('homeView').hidden=true;$('browseView').hidden=false;$('resultsView').hidden=true;
+  $('menuPanels').classList.toggle('active',mode==='panel');$('menuPanels').setAttribute('aria-pressed',String(mode==='panel'));
+  $('menuSystems').classList.toggle('active',mode==='system');$('menuSystems').setAttribute('aria-pressed',String(mode==='system'));
   $('modeCrumb').textContent=`לפי ${modeLabel(mode)}`;
   $('browseEyebrow').textContent=`שלב 1 · ${modeLabel(mode)}ים בטבלה`;
   $('browseTitle').textContent=`בחר ${modeLabel(mode)}`;
@@ -133,6 +138,8 @@ $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('cho
 $('navHome').addEventListener('click',goHome);
 $('navPanels').addEventListener('click',()=>openBrowse('panel'));
 $('navSystems').addEventListener('click',()=>openBrowse('system'));
+$('menuPanels').addEventListener('click',()=>openBrowse('panel'));
+$('menuSystems').addEventListener('click',()=>openBrowse('system'));
 $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
 $('alternateView').addEventListener('click',activateAlternate);
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('installButton').hidden=false;});
