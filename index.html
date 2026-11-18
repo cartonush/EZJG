@@ -66,13 +66,30 @@
       <div id="resultList" class="result-list"></div>
     </section>
 
+    <section id="hardCodesView" class="browse-section" hidden>
+      <div class="breadcrumb"><button id="codesBackHome" class="back-button">← <span>דף הבית</span></button><span>/</span><span>קודים קשיחים</span></div>
+      <div id="codesChoices">
+        <div class="section-heading browse-heading"><div><span class="eyebrow">בחירת דגם</span><h2>קודים קשיחים</h2></div></div>
+        <div class="mode-grid">
+          <button type="button" class="mode-card" data-code-model="ברק1"><span class="mode-icon">1</span><span class="mode-label">ברק 1</span><span class="mode-hint">הצגת קוד ועמודת ברק 1</span><span class="mode-arrow">←</span></button>
+          <button type="button" class="mode-card" data-code-model="ברק2"><span class="mode-icon">2</span><span class="mode-label">ברק 2</span><span class="mode-hint">הצגת קוד ועמודת ברק 2</span><span class="mode-arrow">←</span></button>
+        </div>
+      </div>
+      <div id="codesResults" hidden>
+        <button id="codesBackChoices" class="back-button codes-back">← <span>בחירת ברק</span></button>
+        <div class="section-heading browse-heading"><div><span class="eyebrow">קודים קשיחים · נתוני הדגמה</span><h2 id="codesTitle"></h2></div><span class="count-pill" id="codesCount"></span></div>
+        <div id="codesContent"></div>
+      </div>
+    </section>
+
   </main>
 
   <nav class="bottom-nav" aria-label="תפריט ראשי">
     <button id="navHome" class="nav-item active"><span>⌂</span><small>ראשי</small></button>
     <button id="navPanels" class="nav-item"><span>▤</span><small>פאנלים</small></button>
     <button id="navSystems" class="nav-item"><span>⌘</span><small>מערכות</small></button>
-    <div class="nav-item nav-version" aria-label="גרסה 1.0.9"><span id="appVersion">1.0.9</span><small>גרסה</small></div>
+    <button id="navCodes" class="nav-item"><span>⌗</span><small>קודים</small></button>
+    <div class="nav-item nav-version" aria-label="גרסה 1.1.0"><span id="appVersion">1.1.0</span><small>גרסה</small></div>
   </nav>
 
   <dialog id="detailDialog" class="detail-dialog">

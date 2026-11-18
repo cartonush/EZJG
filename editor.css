@@ -9,3 +9,14 @@ html,body{touch-action:manipulation}
 .nav-version span{font-size:12px;font-weight:700;direction:ltr;unicode-bidi:isolate;line-height:1.2}
 .nav-version small{font-size:9px}
 .nav-version:hover span{transform:none}
+.codes-back{margin:2px 0 24px}
+.codes-table-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.codes-table{width:100%;border-collapse:collapse;text-align:right;table-layout:fixed}
+.codes-table th,.codes-table td{padding:14px 17px;overflow-wrap:anywhere}
+.codes-table th{background:#e9f0f7;color:var(--navy);font-size:13px}
+.codes-table td{border-top:1px solid var(--line);font-size:13px}
+.codes-table tr:nth-child(even) td{background:#f8fafc}
+.bottom-nav{gap:clamp(4px,3vw,34px)}
+.bottom-nav .nav-item{min-width:48px}
+.bottom-nav .nav-version{min-width:58px}
+@media(max-width:370px){.bottom-nav{gap:4px;padding-left:6px;padding-right:6px}}

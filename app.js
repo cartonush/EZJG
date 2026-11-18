@@ -1,5 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
-const APP_VERSION = '1.0.9';
+const APP_VERSION = '1.1.0';
 const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
@@ -7,6 +7,8 @@ let activeChoice = '';
 let activeQuery = '';
 let selectedRecord = null;
 let installPrompt = null;
+let hardCodes = [];
+let codesLoadError = false;
 
 const $ = (id) => document.getElementById(id);
 if ($('appVersion')) $('appVersion').textContent = APP_VERSION;
@@ -74,12 +76,13 @@ function setNav(active) {
   document.querySelectorAll('.nav-item').forEach(item=>item.classList.toggle('active',item.id===active));
 }
 function goHome() {
-  $('homeView').hidden=false;$('browseView').hidden=true;$('resultsView').hidden=true;
+  $('homeView').hidden=false;$('browseView').hidden=true;$('resultsView').hidden=true;$('hardCodesView').hidden=true;
   setNav('navHome');activeChoice='';activeQuery='';
 }
 function openBrowse(nextMode) {
   mode=nextMode;activeChoice='';activeQuery='';
   $('homeView').hidden=true;$('browseView').hidden=false;$('resultsView').hidden=true;
+  $('hardCodesView').hidden=true;
   $('menuPanels').classList.toggle('active',mode==='panel');$('menuPanels').setAttribute('aria-pressed',String(mode==='panel'));
   $('menuSystems').classList.toggle('active',mode==='system');$('menuSystems').setAttribute('aria-pressed',String(mode==='system'));
   $('modeCrumb').textContent=`לפי ${modeLabel(mode)}`;
@@ -129,6 +132,46 @@ function openRelatedView(target,value) {
   $('detailDialog').close();openBrowse(target);openResults(value);
 }
 
+async function loadHardCodes() {
+  const columns=['קוד','ברק1','ברק2'];
+  try {
+    if(window.XLSX){
+      const response=await fetch('data/קודים_קשיחים.xlsx');
+      if(!response.ok)throw new Error();
+      const book=XLSX.read(await response.arrayBuffer(),{type:'array'});
+      const matrix=XLSX.utils.sheet_to_json(book.Sheets[book.SheetNames[0]],{header:1,defval:'',raw:false});
+      const headers=(matrix[0]||[]).map(normalize);
+      if(!columns.every(column=>headers.includes(column)))throw new Error('חסרות עמודות בטבלה');
+      hardCodes=matrix.slice(1).map(cells=>Object.fromEntries(columns.map(column=>[column,normalize(cells[headers.indexOf(column)])]))).filter(row=>columns.some(column=>row[column]));
+      return;
+    }
+  } catch {}
+  try {
+    const response=await fetch('data/hard-codes.csv');
+    if(!response.ok)throw new Error();
+    const csv=await response.text();
+    if(csv.replace(/^\uFEFF/,'').split(/\r?\n/,1)[0].trim()!==columns.join(','))throw new Error();
+    hardCodes=parseCsv(csv).map(row=>Object.fromEntries(columns.map(column=>[column,normalize(row[column])]))).filter(row=>columns.some(column=>row[column]));
+  } catch {codesLoadError=true;}
+}
+
+function openCodes() {
+  $('homeView').hidden=true;$('browseView').hidden=true;$('resultsView').hidden=true;$('hardCodesView').hidden=false;
+  $('codesChoices').hidden=false;$('codesResults').hidden=true;
+  setNav('navCodes');
+}
+
+function showCodes(model) {
+  $('codesChoices').hidden=true;$('codesResults').hidden=false;
+  $('codesTitle').textContent=model==='ברק1'?'ברק 1':'ברק 2';
+  $('codesCount').textContent=`${hardCodes.length} קודים`;
+  $('codesContent').innerHTML=codesLoadError
+    ? '<div class="empty-state">לא ניתן לטעון את טבלת הקודים.</div>'
+    : !hardCodes.length
+      ? '<div class="empty-state">טרם נוספו קודים לטבלה. אפשר לערוך את קובץ Excel שבמאגר ולהוסיף שורות.</div>'
+      : `<div class="codes-table-wrap"><table class="codes-table"><thead><tr><th scope="col">קוד</th><th scope="col">${model==='ברק1'?'ברק 1':'ברק 2'}</th></tr></thead><tbody>${hardCodes.map(row=>`<tr><td><bdi dir="auto">${esc(row['קוד']||'—')}</bdi></td><td><bdi dir="auto">${esc(row[model]||'—')}</bdi></td></tr>`).join('')}</tbody></table></div>`;
+}
+
 $('homeButton').addEventListener('click',goHome);
 $('backHome').addEventListener('click',goHome);
 $('backChoices').addEventListener('click',()=>{ $('resultsView').hidden=true;$('browseView').hidden=false; });
@@ -138,10 +181,14 @@ $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('cho
 $('navHome').addEventListener('click',goHome);
 $('navPanels').addEventListener('click',()=>openBrowse('panel'));
 $('navSystems').addEventListener('click',()=>openBrowse('system'));
+$('navCodes').addEventListener('click',openCodes);
+$('codesBackHome').addEventListener('click',goHome);
+$('codesBackChoices').addEventListener('click',openCodes);
+document.querySelectorAll('[data-code-model]').forEach(button=>button.addEventListener('click',()=>showCodes(button.dataset.codeModel)));
 $('menuPanels').addEventListener('click',()=>openBrowse('panel'));
 $('menuSystems').addEventListener('click',()=>openBrowse('system'));
 $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
 $('alternateView').addEventListener('click',activateAlternate);
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('installButton').hidden=false;});
 $('installButton').addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('installButton').hidden=true;});
-loadDefault().then(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});});
+Promise.all([loadDefault(),loadHardCodes()]).then(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});});
