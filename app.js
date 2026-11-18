@@ -1,5 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
-const APP_VERSION = '1.1.1';
+const APP_VERSION = '1.1.2';
 const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
@@ -85,11 +85,10 @@ function openBrowse(nextMode) {
   $('hardCodesView').hidden=true;
   $('menuPanels').classList.toggle('active',mode==='panel');$('menuPanels').setAttribute('aria-pressed',String(mode==='panel'));
   $('menuSystems').classList.toggle('active',mode==='system');$('menuSystems').setAttribute('aria-pressed',String(mode==='system'));
-  $('modeCrumb').textContent=`לפי ${modeLabel(mode)}`;
   $('browseEyebrow').textContent=`שלב 1 · ${modeLabel(mode)}ים בטבלה`;
   $('browseTitle').textContent=`בחר ${modeLabel(mode)}`;
   $('choiceSearch').placeholder=`חיפוש ${modeLabel(mode)}…`;$('choiceSearch').value='';$('clearSearch').hidden=true;
-  setNav(mode==='panel'?'navPanels':'navSystems');renderChoices();
+  setNav('navBrowse');renderChoices();
 }
 function renderChoices() {
   const key=mode==='panel'?'פאנל':'מערכת';
@@ -179,8 +178,7 @@ document.querySelectorAll('.mode-card').forEach(button=>button.addEventListener(
 $('choiceSearch').addEventListener('input',event=>{activeQuery=event.target.value;$('clearSearch').hidden=!activeQuery;renderChoices();});
 $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('choiceSearch').dispatchEvent(new Event('input'));});
 $('navHome').addEventListener('click',goHome);
-$('navPanels').addEventListener('click',()=>openBrowse('panel'));
-$('navSystems').addEventListener('click',()=>openBrowse('system'));
+$('navBrowse').addEventListener('click',()=>openBrowse(mode));
 $('navCodes').addEventListener('click',openCodes);
 $('codesBackHome').addEventListener('click',goHome);
 $('codesBackChoices').addEventListener('click',openCodes);

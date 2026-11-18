@@ -1,4 +1,4 @@
-const CACHE='ezjg-prototype-1.1.1';
+const CACHE='ezjg-prototype-1.1.2';
 const CORE=['./','./index.html','./styles.css','./editor.css','./app.js','./manifest.webmanifest','./assets/icon.svg','./data/sample-data.csv','./data/טבלת_מכלולים_לדוגמה.xlsx','./data/hard-codes.csv','./data/קודים_קשיחים.xlsx'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
