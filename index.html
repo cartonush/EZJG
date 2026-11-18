@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <meta name="theme-color" content="#10243a">
   <meta name="description" content="אב טיפוס לחיפוש מכלולים לפי מערכת או פאנל, על בסיס נתוני הדגמה בלבד.">
   <title>EZJG · מאתר מכלולים</title>
@@ -51,6 +51,10 @@
 
     <section id="browseView" class="browse-section" hidden>
       <div class="breadcrumb"><button id="backHome" class="back-button">← <span>דף הבית</span></button><span>/</span><span id="modeCrumb"></span></div>
+      <div class="browse-switch" role="group" aria-label="מעבר בין תפריט הפאנלים לתפריט המערכות">
+        <button id="menuPanels" type="button" aria-pressed="false">פאנלים</button>
+        <button id="menuSystems" type="button" aria-pressed="false">מערכות</button>
+      </div>
       <div class="section-heading browse-heading"><div><span class="eyebrow" id="browseEyebrow"></span><h2 id="browseTitle"></h2></div><span class="count-pill" id="choiceCount"></span></div>
       <div class="filter-wrap"><span>⌕</span><input id="choiceSearch" type="search" placeholder="חיפוש…" autocomplete="off"><button id="clearSearch" aria-label="ניקוי חיפוש" hidden>×</button></div>
       <div id="choiceList" class="choice-list"></div>
@@ -68,7 +72,7 @@
     <button id="navHome" class="nav-item active"><span>⌂</span><small>ראשי</small></button>
     <button id="navPanels" class="nav-item"><span>▤</span><small>פאנלים</small></button>
     <button id="navSystems" class="nav-item"><span>⌘</span><small>מערכות</small></button>
-    <div class="nav-item nav-version" aria-label="גרסה 1.0.8"><span id="appVersion">1.0.8</span><small>גרסה</small></div>
+    <div class="nav-item nav-version" aria-label="גרסה 1.0.9"><span id="appVersion">1.0.9</span><small>גרסה</small></div>
   </nav>
 
   <dialog id="detailDialog" class="detail-dialog">
