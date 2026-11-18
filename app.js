@@ -1,5 +1,5 @@
 const DEMO_PATH = 'data/sample-data.csv';
-const APP_VERSION = '1.1.2';
+const APP_VERSION = '1.1.3';
 const EXPECTED = ['מכלול', 'מערכת', 'פאנל', 'כרך', 'JG', 'מסחא'];
 let records = [];
 let mode = 'panel';
@@ -9,6 +9,7 @@ let selectedRecord = null;
 let installPrompt = null;
 let hardCodes = [];
 let codesLoadError = false;
+let activeCodeModel = 'ברק1';
 
 const $ = (id) => document.getElementById(id);
 if ($('appVersion')) $('appVersion').textContent = APP_VERSION;
@@ -156,13 +157,18 @@ async function loadHardCodes() {
 
 function openCodes() {
   $('homeView').hidden=true;$('browseView').hidden=true;$('resultsView').hidden=true;$('hardCodesView').hidden=false;
-  $('codesChoices').hidden=false;$('codesResults').hidden=true;
+  showCodes(activeCodeModel);
   setNav('navCodes');
 }
 
 function showCodes(model) {
-  $('codesChoices').hidden=true;$('codesResults').hidden=false;
-  $('codesTitle').textContent=model==='ברק1'?'ברק 1':'ברק 2';
+  activeCodeModel=model;
+  for(const button of document.querySelectorAll('[data-code-model]')){
+    const selected=button.dataset.codeModel===model;
+    button.classList.toggle('active',selected);
+    button.setAttribute('aria-selected',String(selected));
+  }
+  $('codesContent').setAttribute('aria-labelledby',model==='ברק1'?'codesBarak1':'codesBarak2');
   $('codesCount').textContent=`${hardCodes.length} קודים`;
   $('codesContent').innerHTML=codesLoadError
     ? '<div class="empty-state">לא ניתן לטעון את טבלת הקודים.</div>'
@@ -180,8 +186,6 @@ $('clearSearch').addEventListener('click',()=>{$('choiceSearch').value='';$('cho
 $('navHome').addEventListener('click',goHome);
 $('navBrowse').addEventListener('click',()=>openBrowse(mode));
 $('navCodes').addEventListener('click',openCodes);
-$('codesBackHome').addEventListener('click',goHome);
-$('codesBackChoices').addEventListener('click',openCodes);
 document.querySelectorAll('[data-code-model]').forEach(button=>button.addEventListener('click',()=>showCodes(button.dataset.codeModel)));
 $('menuPanels').addEventListener('click',()=>openBrowse('panel'));
 $('menuSystems').addEventListener('click',()=>openBrowse('system'));
@@ -189,4 +193,4 @@ $('closeDialog').addEventListener('click',()=>$('detailDialog').close());
 $('alternateView').addEventListener('click',activateAlternate);
 window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();installPrompt=event;$('installButton').hidden=false;});
 $('installButton').addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;$('installButton').hidden=true;});
-Promise.all([loadDefault(),loadHardCodes()]).then(()=>{if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});});
+Promise.all([loadDefault(),loadHardCodes()]).then(()=>{if(!$('hardCodesView').hidden)showCodes(activeCodeModel);if('serviceWorker'in navigator)navigator.serviceWorker.register('service-worker.js').catch(()=>{});});

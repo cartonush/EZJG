@@ -9,12 +9,15 @@ html,body{touch-action:manipulation}
 .nav-version span{font-size:12px;font-weight:700;direction:ltr;unicode-bidi:isolate;line-height:1.2}
 .nav-version small{font-size:9px}
 .nav-version:hover span{transform:none}
-.codes-back{margin:2px 0 24px}
+.codes-switch{display:flex;gap:10px;margin-bottom:15px}
+.codes-switch button{flex:1;min-height:48px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--navy);font:700 14px Heebo,Arial,sans-serif;cursor:pointer}
+.codes-switch button.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.codes-switch button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .codes-table-wrap{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
 .codes-table{width:100%;border-collapse:collapse;text-align:right;table-layout:fixed}
-.codes-table th,.codes-table td{padding:14px 17px;overflow-wrap:anywhere}
-.codes-table th{background:#e9f0f7;color:var(--navy);font-size:13px}
-.codes-table td{border-top:1px solid var(--line);font-size:13px}
+.codes-table th,.codes-table td{padding:15px 17px;overflow-wrap:anywhere;font-size:12px;line-height:1.5}
+.codes-table th{background:#e9f0f7;color:var(--navy);font-weight:700}
+.codes-table td{border-top:1px solid var(--line)}
 .codes-table tr:nth-child(even) td{background:#f8fafc}
 .bottom-nav{justify-content:space-around;gap:0;padding-left:6px;padding-right:6px}
 .bottom-nav .nav-item{flex:1;min-width:0}
