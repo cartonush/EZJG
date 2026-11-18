@@ -16,7 +16,8 @@ html,body{touch-action:manipulation}
 .codes-table th{background:#e9f0f7;color:var(--navy);font-size:13px}
 .codes-table td{border-top:1px solid var(--line);font-size:13px}
 .codes-table tr:nth-child(even) td{background:#f8fafc}
-.bottom-nav{gap:clamp(4px,3vw,34px)}
-.bottom-nav .nav-item{min-width:48px}
-.bottom-nav .nav-version{min-width:58px}
-@media(max-width:370px){.bottom-nav{gap:4px;padding-left:6px;padding-right:6px}}
+.bottom-nav{justify-content:space-around;gap:0;padding-left:6px;padding-right:6px}
+.bottom-nav .nav-item{flex:1;min-width:0}
+.bottom-nav .nav-version{min-width:0}
+.bottom-nav .nav-item small{line-height:1.15;white-space:nowrap}
+@media(max-width:370px){.bottom-nav{padding-left:3px;padding-right:3px}.bottom-nav .nav-item small{font-size:9px}}
